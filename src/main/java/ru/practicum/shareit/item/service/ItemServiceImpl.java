@@ -1,10 +1,10 @@
 package ru.practicum.shareit.item.service;
 
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ForbiddenException;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
         userService.getUserById(userId);
         // Check if the user owns the item
         if (!itemStorage.findItemById(itemId).getOwner().equals(userId)) {
-            throw new NotFoundException("User with ID " + userId + " does not own the item with ID " + itemId);
+            throw new ForbiddenException("User with ID " + userId + " does not own the item with ID " + itemId);
         }
 
         updatedItem = itemStorage.updateItem(itemId, updatedItem, userId);

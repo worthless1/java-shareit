@@ -5,10 +5,7 @@ import ru.practicum.shareit.exception.AlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class UserInMemoryStorage implements UserStorage {
@@ -17,8 +14,10 @@ public class UserInMemoryStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        if (users.values().stream()
-                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+        boolean isExistUserWithThisEmail = users.values().stream()
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()));
+
+        if (isExistUserWithThisEmail) {
             throw new AlreadyExistsException("User with this email already exists.");
         }
         Long userId = generateUserId();
@@ -59,12 +58,8 @@ public class UserInMemoryStorage implements UserStorage {
 
     @Override
     public User findUserById(Long userId) {
-        User user = users.get(userId);
-        if (user == null) {
-            throw new NotFoundException("User with ID " + userId + " not found");
-        }
-        return user;
-
+        return Optional.ofNullable(users.get(userId))
+                .orElseThrow(() -> new NotFoundException("User with ID " + userId + " not found"));
     }
 
     @Override
