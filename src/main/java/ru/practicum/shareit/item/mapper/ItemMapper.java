@@ -39,5 +39,4 @@ public interface ItemMapper {
 
     @Mapping(target = "authorName", source = "author.name")
     CommentDto toCommentDto(Comment comment);
-
 }
