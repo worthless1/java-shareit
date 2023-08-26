@@ -11,9 +11,12 @@ import javax.validation.constraints.Size;
 @Builder
 public class UserDto {
     private Long id;
+
     @Size(min = 2, max = 32, message = "Minimum name length is 2 characters，the maximum is 32 characters")
     private String name;
+
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must be correct")
     private String email;
+
 }
