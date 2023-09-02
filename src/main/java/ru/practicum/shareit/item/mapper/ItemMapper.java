@@ -4,12 +4,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import ru.practicum.shareit.booking.dto.BookingOwnerDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
-import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoOwner;
+import ru.practicum.shareit.item.dto.ItemOwnerDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
@@ -20,17 +20,21 @@ public interface ItemMapper {
     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
     @Mapping(target = "available", source = "item.available")
+    @Mapping(target = "requestId", source = "item.request.id")
     ItemDto toItemDto(Item item);
 
     @Mapping(target = "id", source = "item.id")
-    @Mapping(target = "lastBooking", source = "lastBooking", qualifiedByName = "BookingToBookingDtoOwner")
-    @Mapping(target = "nextBooking", source = "nextBooking", qualifiedByName = "BookingToBookingDtoOwner")
+    @Mapping(target = "lastBooking", source = "lastBooking", qualifiedByName = "toBookingOwnerDto")
+    @Mapping(target = "nextBooking", source = "nextBooking", qualifiedByName = "toBookingOwnerDto")
     @Mapping(target = "comments", source = "comments")
-    ItemDtoOwner toItemDtoOwner(Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments);
+    ItemOwnerDto toItemOwnerDto(Item item,
+                                Booking lastBooking,
+                                Booking nextBooking,
+                                List<Comment> comments);
 
-    @Named("BookingToBookingDtoOwner")
-    static BookingShortDto toBookingDtoOwner(Booking booking) {
-        return BookingMapper.INSTANCE.toBookingDtoOwner(booking);
+    @Named("toBookingOwnerDto")
+    static BookingOwnerDto toBookingOwnerDto(Booking booking) {
+        return BookingMapper.INSTANCE.toBookingOwnerDto(booking);
     }
 
     Item toItem(ItemDto itemDto);

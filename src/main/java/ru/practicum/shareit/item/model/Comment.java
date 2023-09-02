@@ -9,13 +9,14 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comments", schema = "public")
+@Table(name = "comments")
 @NoArgsConstructor
 @Getter
 @Setter
 public class Comment {
 
     @Id
+    @Column(name = "comment_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

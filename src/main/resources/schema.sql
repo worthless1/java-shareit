@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS ITEMS
     name        VARCHAR(64)   NOT NULL,
     description VARCHAR(1024) NOT NULL,
     available   BOOLEAN       NOT NULL,
-    CONSTRAINT items_fk FOREIGN KEY (owner_id) REFERENCES users (user_id) ON DELETE CASCADE
+    request_id  BIGINT,
+    CONSTRAINT items_fk FOREIGN KEY (owner_id) REFERENCES users (user_id) ON DELETE CASCADE,
+    CONSTRAINT ITEMS_REQUESTS_fk FOREIGN KEY (request_id) REFERENCES REQUESTS (request_id) ON DELETE CASCADE
 );
-
-CREATE TYPE IF NOT EXISTS BOOKING_STATUS AS ENUM ('WAITING', 'APPROVED', 'REJECTED', 'CANCELED');
 
 CREATE TABLE IF NOT EXISTS BOOKINGS
 (
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS BOOKINGS
     booker_id  BIGINT                      NOT NULL,
     start_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_date   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    status     INTEGER                     NOT NULL,
+    status     VARCHAR(10)                 NOT NULL,
     CONSTRAINT bookings_items_fk FOREIGN KEY (item_id) REFERENCES items (item_id) ON DELETE CASCADE,
     CONSTRAINT bookings_users_fk FOREIGN KEY (booker_id) REFERENCES users (user_id) ON DELETE CASCADE
 );

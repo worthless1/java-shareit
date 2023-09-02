@@ -7,14 +7,15 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
-@Table(name = "bookings", schema = "public")
+@Table(name = "bookings")
+@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Booking {
 
     @Id
+    @Column(name = "booking_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

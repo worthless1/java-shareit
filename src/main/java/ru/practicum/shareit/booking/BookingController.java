@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingAnswerDto;
@@ -19,46 +18,38 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping
-    public ResponseEntity<List<BookingAnswerDto>> getAllBookingsByUser(
-            @RequestHeader(USER_ID_HEADER) Long userId,
-            @RequestParam(defaultValue = "ALL") String state) {
-        List<BookingAnswerDto> bookingAnswerDtos = bookingService.getAllBookingsByUser(userId, state);
-
-        return ResponseEntity.ok().body(bookingAnswerDtos);
+    public List<BookingAnswerDto> getAllBookingsByUser(@RequestHeader(USER_ID_HEADER) Long userId,
+                                                       @RequestParam(defaultValue = "ALL") String state,
+                                                       @RequestParam(defaultValue = "0") Integer from,
+                                                       @RequestParam(defaultValue = "10") Integer size) {
+        return bookingService.getAllBookingsByUser(userId, state, from, size);
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingAnswerDto>> getAllBookingsAllItemsByOwner(
-            @RequestHeader(USER_ID_HEADER) Long userId,
-            @RequestParam(defaultValue = "ALL") String state) {
-        List<BookingAnswerDto> bookingAnswerDtos = bookingService.getAllBookingsAllItemsByOwner(userId, state);
-
-        return ResponseEntity.ok().body(bookingAnswerDtos);
+    public List<BookingAnswerDto> getAllBookingsAllItemsByOwner(@RequestHeader(USER_ID_HEADER) Long userId,
+                                                                @RequestParam(defaultValue = "ALL") String state,
+                                                                @RequestParam(defaultValue = "0") Integer from,
+                                                                @RequestParam(defaultValue = "10") Integer size) {
+        return bookingService.getAllBookingsAllItemsByOwner(userId, state, from, size);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingAnswerDto> getBookingById(@PathVariable Long bookingId,
-                                                           @RequestHeader(USER_ID_HEADER) Long userId) {
-        BookingAnswerDto bookingAnswerDto = bookingService.getBookingById(userId, bookingId);
-
-        return ResponseEntity.ok(bookingAnswerDto);
+    public BookingAnswerDto getBookingById(@PathVariable Long bookingId,
+                                           @RequestHeader(USER_ID_HEADER) Long userId) {
+        return bookingService.getBookingById(userId, bookingId);
     }
 
     @PostMapping
     @Validated
-    public ResponseEntity<BookingAnswerDto> saveBooking(@Valid @RequestBody BookingRequestDto bookingInDto,
-                                                        @RequestHeader(USER_ID_HEADER) Long userId) {
-        BookingAnswerDto bookingAnswerDto = bookingService.saveBooking(bookingInDto, userId);
-
-        return ResponseEntity.ok(bookingAnswerDto);
+    public BookingAnswerDto saveBooking(@Valid @RequestBody BookingRequestDto bookingInDto,
+                                        @RequestHeader(USER_ID_HEADER) Long userId) {
+        return bookingService.saveBooking(bookingInDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingAnswerDto> updateItem(@PathVariable Long bookingId, @RequestParam Boolean approved,
-                                                       @RequestHeader(USER_ID_HEADER) Long userId) {
-        BookingAnswerDto bookingAnswerDto = bookingService.updateBooking(bookingId, approved, userId);
-
-        return ResponseEntity.ok(bookingAnswerDto);
+    public BookingAnswerDto updateItem(@PathVariable Long bookingId, @RequestParam Boolean approved,
+                                       @RequestHeader(USER_ID_HEADER) Long userId) {
+        return bookingService.updateBooking(bookingId, approved, userId);
     }
 
 }
