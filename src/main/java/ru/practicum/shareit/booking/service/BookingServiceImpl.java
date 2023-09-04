@@ -207,7 +207,7 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.INSTANCE.toBooking(bookingDto, user, item);
     }
 
-    private State convertToStateBooking(String textState) {
+    State convertToStateBooking(String textState) {
         try {
             return State.valueOf(textState);
         } catch (IllegalArgumentException e) {

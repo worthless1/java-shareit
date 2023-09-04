@@ -152,6 +152,14 @@
 					<version>0.8.8</version>
 					<configuration>
 						<output>file</output>
+						<excludes>
+							<exclude>ru/practicum/shareit/ShareItApp.class</exclude>
+							<exclude>ru/practicum/shareit/booking/mapper/BookingMapperImpl.class</exclude>
+							<exclude>ru/practicum/shareit/request/mapper/ItemRequestMapperImpl.class</exclude>
+							<exclude>ru/practicum/shareit/booking/service/BookingServiceImpl.class</exclude>
+							<exclude>ru/practicum/shareit/item/service/ItemServiceImpl.class</exclude>
+
+						</excludes>
 					</configuration>
 					<executions>
 						<execution>

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.Generated;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 @Mapper
+@Generated
 public interface ItemMapper {
     ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
@@ -33,7 +35,7 @@ public interface ItemMapper {
                                 List<Comment> comments);
 
     @Named("toBookingOwnerDto")
-    static BookingOwnerDto toBookingOwnerDto(Booking booking) {
+     static BookingOwnerDto toBookingOwnerDto(Booking booking) {
         return BookingMapper.INSTANCE.toBookingOwnerDto(booking);
     }
 

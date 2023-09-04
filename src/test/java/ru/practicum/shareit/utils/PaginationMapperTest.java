@@ -16,6 +16,12 @@ class PaginationMapperTest {
     }
 
     @Test
+    void toPageTestNull() {
+        Pageable page = PaginationMapper.toPage(null, 20);
+        assertNull(page);
+    }
+
+    @Test
     void toPageFromErrorTest() {
         final ValidationException exception = assertThrows(
                 ValidationException.class,
