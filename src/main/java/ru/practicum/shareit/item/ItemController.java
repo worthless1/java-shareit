@@ -33,18 +33,23 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto get(@PathVariable Long itemId, @RequestHeader(USER_ID_HEADER) long userId) {
+    public ItemDto get(@PathVariable Long itemId,
+                       @RequestHeader(USER_ID_HEADER) long userId) {
         return itemService.getItemById(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemDto> getAllItemsByUser(@RequestHeader(USER_ID_HEADER) Long userId) {
-        return itemService.getAllItemsByUser(userId);
+    public List<ItemDto> getAllItemsByUser(@RequestHeader(USER_ID_HEADER) Long userId,
+                                           @RequestParam(defaultValue = "0") Integer from,
+                                           @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.getAllItemsByUser(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemByRenter(@RequestParam("text") String searchText) {
-        return itemService.searchAvailableItems(searchText);
+    public List<ItemDto> searchItemByRenter(@RequestParam("text") String searchText,
+                                            @RequestParam(defaultValue = "0") Integer from,
+                                            @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.searchAvailableItems(searchText, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

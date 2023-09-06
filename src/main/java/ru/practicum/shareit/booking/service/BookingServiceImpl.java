@@ -1,14 +1,17 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.utils.PaginationMapper;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingAnswerDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
+import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.UnsupportedStatusException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -19,6 +22,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -31,82 +35,78 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Override
-    public List<BookingAnswerDto> getAllBookingsByUser(Long userId, String state) {
+    public List<BookingAnswerDto> getAllBookingsByUser(Long userId, String state, Integer from, Integer size) {
         getUserById(userId);
 
-        List<Booking> bookings;
-        switch (state) {
-            case ("ALL"):
-                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+        List<Booking> bookings = new ArrayList<>();
+        PageRequest pageRequest = PaginationMapper.toPage(from, size);
+        State bookingState = convertToStateBooking(state);
+
+        switch (bookingState) {
+            case ALL:
+                bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(
+                        userId, pageRequest);
                 break;
-            case ("CURRENT"):
+            case CURRENT:
                 bookings = bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                        userId, LocalDateTime.now(), LocalDateTime.now());
+                        userId, LocalDateTime.now(), LocalDateTime.now(), pageRequest);
                 break;
-            case ("PAST"):
-                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+            case PAST:
+                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(
+                        userId, LocalDateTime.now(), pageRequest);
                 break;
-            case ("FUTURE"):
-                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+            case FUTURE:
+                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(
+                        userId, LocalDateTime.now(), pageRequest);
                 break;
-            case ("WAITING"):
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+            case WAITING:
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                        userId, BookingStatus.WAITING, pageRequest);
                 break;
-            case ("REJECTED"):
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.REJECTED);
+            case REJECTED:
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(
+                        userId, BookingStatus.REJECTED, pageRequest);
                 break;
-            default:
-                throw new UnsupportedStatusException();
         }
 
-        return BookingMapper.INSTANCE.convertBookingListToBookingOutDTOList(bookings);
+        return BookingMapper.INSTANCE.convertBookingListToBookingAnswerDTOList(bookings);
     }
 
     @Override
-    public List<BookingAnswerDto> getAllBookingsAllItemsByOwner(Long ownerId, String state) {
+    public List<BookingAnswerDto> getAllBookingsAllItemsByOwner(Long ownerId, String state, Integer from, Integer size) {
         getUserById(ownerId);
+        PageRequest pageRequest = PaginationMapper.toPage(from, size);
+        State bookingState = convertToStateBooking(state);
 
-        List<Booking> bookings;
+        List<Booking> bookings = new ArrayList<>();
 
-        switch (state) {
-            case "ALL":
-                bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId);
+        switch (bookingState) {
+            case ALL:
+                bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageRequest);
                 break;
-            case "CURRENT":
+            case CURRENT:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(
-                        ownerId,
-                        LocalDateTime.now(),
-                        LocalDateTime.now()
-                );
+                        ownerId, LocalDateTime.now(), LocalDateTime.now(), pageRequest);
                 break;
-            case "PAST":
+            case PAST:
                 bookings = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(
-                        ownerId,
-                        LocalDateTime.now()
-                );
+                        ownerId, LocalDateTime.now(), pageRequest);
                 break;
-            case "FUTURE":
+            case FUTURE:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(
-                        ownerId,
-                        LocalDateTime.now()
-                );
+                        ownerId, LocalDateTime.now(), pageRequest);
                 break;
-            case "WAITING":
+            case WAITING:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
-                        ownerId,
-                        BookingStatus.WAITING
-                );
+                        ownerId, BookingStatus.WAITING, pageRequest);
                 break;
-            case "REJECTED":
+            case REJECTED:
                 bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(
-                        ownerId,
-                        BookingStatus.REJECTED
-                );
+                        ownerId, BookingStatus.REJECTED, pageRequest);
                 break;
-            default:
-                throw new UnsupportedStatusException();
         }
-        return BookingMapper.INSTANCE.convertBookingListToBookingOutDTOList(bookings);
+
+        return BookingMapper.INSTANCE.convertBookingListToBookingAnswerDTOList(bookings);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class BookingServiceImpl implements BookingService {
                     " did not make a booking with id = " + bookingId);
         }
 
-        return BookingMapper.INSTANCE.toBookingOutDto(booking);
+        return BookingMapper.INSTANCE.toBookingAnswerDto(booking);
     }
 
 
@@ -137,7 +137,7 @@ public class BookingServiceImpl implements BookingService {
         checkOwnership(item, userId);
 
         Booking booking = createBooking(validatedBookingDto, user, item);
-        return BookingMapper.INSTANCE.toBookingOutDto(bookingRepository.save(booking));
+        return BookingMapper.INSTANCE.toBookingAnswerDto(bookingRepository.save(booking));
     }
 
     @Transactional
@@ -162,7 +162,7 @@ public class BookingServiceImpl implements BookingService {
             booking.setStatus(BookingStatus.REJECTED);
         }
 
-        return BookingMapper.INSTANCE.toBookingOutDto(bookingRepository.saveAndFlush(booking));
+        return BookingMapper.INSTANCE.toBookingAnswerDto(bookingRepository.saveAndFlush(booking));
 
     }
 
@@ -204,10 +204,15 @@ public class BookingServiceImpl implements BookingService {
 
     private Booking createBooking(BookingRequestDto bookingDto, User user, Item item) {
         bookingDto.setStatus(BookingStatus.WAITING);
-        Booking booking = BookingMapper.INSTANCE.toBooking(bookingDto);
-        booking.setBooker(user);
-        booking.setItem(item);
-        return booking;
+        return BookingMapper.INSTANCE.toBooking(bookingDto, user, item);
+    }
+
+    State convertToStateBooking(String textState) {
+        try {
+            return State.valueOf(textState);
+        } catch (IllegalArgumentException e) {
+            throw new UnsupportedStatusException();
+        }
     }
 
 }
