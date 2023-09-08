@@ -202,19 +202,4 @@ class ItemControllerTest {
         verify(itemService, times(1)).addComment(commentDto, itemId, userId);
     }
 
-//    @Test
-//    void saveCommentThenExceptionThrown() throws Exception {
-//        long itemId = 0L;
-//        CommentDto commentDto = new CommentDto();
-//
-//        mockMvc.perform(post("/items/{itemId}/comment", itemId)
-//                        .header(USER_ID_HEADER, userId)
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(commentDto)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(itemService, never()).addComment(commentDto, itemId, userId);
-//    }
-
 }

@@ -1,12 +1,10 @@
 package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -36,8 +34,7 @@ public class ItemRequestController {
     }
 
     @PostMapping
-    @Validated
-    public ItemRequestDto saveItemRequest(@Valid @RequestBody ItemRequestDto itemRequestDto,
+    public ItemRequestDto saveItemRequest(@RequestBody ItemRequestDto itemRequestDto,
                                           @RequestHeader(USER_ID_HEADER) Long userId) {
         return itemRequestService.saveItemRequest(itemRequestDto, userId);
     }
